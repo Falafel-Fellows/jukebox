@@ -439,8 +439,11 @@ async def api_get_jukebox_currently(
                         for track in response["queue"]
                     ]
 
-                    queue = [current_track] + upcoming_tracks
-                    return queue
+                    result = {
+                        "current_track": current_track,
+                        "upcoming_tracks": upcoming_tracks
+                    }
+                    return result
                 except:
                     raise HTTPException(
                         status_code=HTTPStatus.NOT_FOUND, detail="Something went wrong"
