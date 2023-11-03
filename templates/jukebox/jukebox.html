@@ -258,8 +258,8 @@
             if (res.data.current_track.id) {
               self.currentlyPlaying = res.data.current_track
             }
-            if (res.data.queue) {
-              self.upcomingTracks = res.data.queue
+            if (res.data.upcoming_tracks) {
+              self.upcomingTracks = res.data.upcoming_tracks
             }
           })
           .catch(function (error) {
