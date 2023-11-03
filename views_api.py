@@ -427,19 +427,19 @@ async def api_get_jukebox_currently(
                         "artist": response["currently_playing"]["artists"][0]["name"],
                         "image": response["currently_playing"]["album"]["images"][0]["url"],
                     }
-                    queue = [
-                        current_track,
-                        upcoming_tracks = *[
-                            {
-                                "id": track["id"],
-                                "name": track["name"],
-                                "album": track["album"]["name"],
-                                "artist": track["artists"][0]["name"],
-                                "image": track["album"]["images"][0]["url"],
-                            }
-                            for track in response["queue"]
-                        ]
+
+                    upcoming_tracks = [
+                        {
+                            "id": track["id"],
+                            "name": track["name"],
+                            "album": track["album"]["name"],
+                            "artist": track["artists"][0]["name"],
+                            "image": track["album"]["images"][0]["url"],
+                        }
+                        for track in response["queue"]
                     ]
+
+                    queue = [current_track] + upcoming_tracks
                     return queue
                 except:
                     raise HTTPException(
