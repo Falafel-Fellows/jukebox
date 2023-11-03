@@ -410,7 +410,7 @@ async def api_get_jukebox_currently(
         try:
             assert jukebox.sp_access_token
             r = await client.get(
-                "https://api.spotify.com/v1/me/player/currently-playing?market=ES",
+                "https://api.spotify.com/v1/me/player/queue?market=ES",
                 timeout=40,
                 headers={"Authorization": "Bearer " + jukebox.sp_access_token},
             )
@@ -420,14 +420,27 @@ async def api_get_jukebox_currently(
                 try:
                     response = r.json()
 
-                    track = {
-                        "id": response["item"]["id"],
-                        "name": response["item"]["name"],
-                        "album": response["item"]["album"]["name"],
-                        "artist": response["item"]["artists"][0]["name"],
-                        "image": response["item"]["album"]["images"][0]["url"],
+                    current_track = {
+                        "id": response["currently_playing"]["id"],
+                        "name": response["currently_playing"]["name"],
+                        "album": response["currently_playing"]["album"]["name"],
+                        "artist": response["currently_playing"]["artists"][0]["name"],
+                        "image": response["currently_playing"]["album"]["images"][0]["url"],
                     }
-                    return track
+
+                    upcoming_tracks = [
+                        {
+                            "id": track["id"],
+                            "name": track["name"],
+                            "album": track["album"]["name"],
+                            "artist": track["artists"][0]["name"],
+                            "image": track["album"]["images"][0]["url"],
+                        }
+                        for track in response["queue"]
+                    ]
+
+                    queue = [current_track] + upcoming_tracks
+                    return queue
                 except:
                     raise HTTPException(
                         status_code=HTTPStatus.NOT_FOUND, detail="Something went wrong"
